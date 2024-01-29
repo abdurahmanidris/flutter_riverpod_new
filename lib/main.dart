@@ -31,36 +31,37 @@ class MyApp extends StatelessWidget {
               TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      home: const MyHomePage(),
+      home: const Main(),
     );
   }
 }
 
-class MyHomePage extends ConsumerWidget {
-  const MyHomePage({super.key});
+class Main extends ConsumerStatefulWidget {
+  const Main({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    //method 1
-    // final name = ref.watch(nameProvider);
+  // State<Main> createState() => _MainState();
+  _MainState createState() => _MainState();
+}
 
+class _MainState extends ConsumerState<Main> {
+  //if we want to read the value from the created provider from any widget lifecyle method
+  @override
+  void initState() {
+    super.initState();
+    final name = ref.read(nameProvider);
+    print(name);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final name = ref.watch(nameProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Riverpod Provider"),
+        title: Text("Riverpod"),
       ),
-      //method 1
-      /*body: Center(
-        child: Text("Hello " + name + "!"),
-      ),*/
-
-      //method 2
       body: Center(
-        child: Consumer(
-          builder: (context, ref, child) {
-            final name = ref.watch(nameProvider);
-            return Text(name);
-          },
-        ),
+        child: Text(name),
       ),
     );
   }
