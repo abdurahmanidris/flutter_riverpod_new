@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod_new/counter_demo.dart';
+import 'package:flutter_riverpod_new/api_service.dart';
 
-final counterProvider =
-    StateNotifierProvider<CounterDemo, int>((ref) => CounterDemo());
+import 'user_model.dart';
+
+final apiProvider = Provider<ApiService>((ref) => ApiService());
+
+final userDataProvider = FutureProvider<List<UserModel>>((ref) {
+  return ref.read(apiProvider).getUser();
+});
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -39,24 +44,31 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final counter = ref.watch(counterProvider);
-
+    final userData = ref.watch(userDataProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("StateNotifierProvider"),
-      ),
-      body: Center(
-        child: Text(
-          '$counter',
-          style: const TextStyle(fontSize: 25),
+        appBar: AppBar(
+          title: const Text("User Data"),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(counterProvider.notifier).increament();
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+        body: userData.when(
+            data: (data) {
+              return ListView.builder(
+                itemBuilder: ((context, index) {
+                  return ListTile(
+                    title: Text(
+                        "${data[index].firstname} ${data[index].lastname}"),
+                    subtitle: Text(data[index].email),
+                    leading:
+                        CircleAvatar(child: Image.network(data[index].avatar)),
+                  );
+                }),
+                itemCount: data.length,
+              );
+            },
+            error: ((error, stackTrace) => Text(error.toString())),
+            loading: (() {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            })));
   }
 }
