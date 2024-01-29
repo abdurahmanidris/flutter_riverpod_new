@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final streamProvider = StreamProvider<int>(((ref) {
-  return Stream.periodic(
-      const Duration(seconds: 2), ((computationCount) => computationCount));
-}));
+import 'package:flutter_riverpod_new/counter.dart';
+import 'package:flutter_riverpod_new/home.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -16,7 +14,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       /*theme: ThemeData(        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -30,33 +28,13 @@ class MyApp extends StatelessWidget {
               TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      home: const MyHomePage(),
+      // home: const MyHomePage(),
+      routerConfig: _router,
     );
   }
 }
 
-class MyHomePage extends ConsumerWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final streamData = ref.watch(streamProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Stream Provider"),
-      ),
-      body: streamData.when(
-          data: ((data) => Center(
-                child: Text(
-                  data.toString(),
-                  style: const TextStyle(fontSize: 25),
-                ),
-              )),
-          error: ((error, StackTrace) => Text(error.toString())),
-          loading: () => const Center(
-                child: CircularProgressIndicator(),
-              )),
-    );
-  }
-}
+final GoRouter _router = GoRouter(routes: [
+  GoRoute(path: '/', builder: (context, state) => const Home()),
+  GoRoute(path: '/counter', builder: (context, state) => const Counter()),
+]);
