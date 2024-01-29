@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod_new/api_service.dart';
 
-import 'user_model.dart';
-
-final apiProvider = Provider<ApiService>((ref) => ApiService());
-
-final userDataProvider = FutureProvider<List<UserModel>>((ref) {
-  return ref.read(apiProvider).getUser();
-});
+final streamProvider = StreamProvider<int>(((ref) {
+  return Stream.periodic(
+      const Duration(seconds: 2), ((computationCount) => computationCount));
+}));
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -44,31 +40,23 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userData = ref.watch(userDataProvider);
+    final streamData = ref.watch(streamProvider);
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("User Data"),
-        ),
-        body: userData.when(
-            data: (data) {
-              return ListView.builder(
-                itemBuilder: ((context, index) {
-                  return ListTile(
-                    title: Text(
-                        "${data[index].firstname} ${data[index].lastname}"),
-                    subtitle: Text(data[index].email),
-                    leading:
-                        CircleAvatar(child: Image.network(data[index].avatar)),
-                  );
-                }),
-                itemCount: data.length,
-              );
-            },
-            error: ((error, stackTrace) => Text(error.toString())),
-            loading: (() {
-              return const Center(
+      appBar: AppBar(
+        title: const Text("Stream Provider"),
+      ),
+      body: streamData.when(
+          data: ((data) => Center(
+                child: Text(
+                  data.toString(),
+                  style: const TextStyle(fontSize: 25),
+                ),
+              )),
+          error: ((error, StackTrace) => Text(error.toString())),
+          loading: () => const Center(
                 child: CircularProgressIndicator(),
-              );
-            })));
+              )),
+    );
   }
 }
