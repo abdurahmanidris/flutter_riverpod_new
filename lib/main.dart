@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod_new/counter_demo.dart';
 
-final nameProvider = Provider<String>(
-  (ref) {
-    return "Abdurahman Idris";
-  },
-);
+final counterProvider =
+    StateNotifierProvider<CounterDemo, int>((ref) => CounterDemo());
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -31,37 +29,33 @@ class MyApp extends StatelessWidget {
               TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      home: const Main(),
+      home: const MyHomePage(),
     );
   }
 }
 
-class Main extends ConsumerStatefulWidget {
-  const Main({super.key});
+class MyHomePage extends ConsumerWidget {
+  const MyHomePage({super.key});
 
   @override
-  // State<Main> createState() => _MainState();
-  _MainState createState() => _MainState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final counter = ref.watch(counterProvider);
 
-class _MainState extends ConsumerState<Main> {
-  //if we want to read the value from the created provider from any widget lifecyle method
-  @override
-  void initState() {
-    super.initState();
-    final name = ref.read(nameProvider);
-    print(name);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final name = ref.watch(nameProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Riverpod"),
+        title: const Text("StateNotifierProvider"),
       ),
       body: Center(
-        child: Text(name),
+        child: Text(
+          '$counter',
+          style: const TextStyle(fontSize: 25),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ref.read(counterProvider.notifier).increament();
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
