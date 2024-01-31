@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod_new/counter.dart';
-import 'package:flutter_riverpod_new/home.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod_new/counter_notifier.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -14,12 +12,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      /*theme: ThemeData(        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),*/
+    return MaterialApp(
+      title: 'Notifier Demo',
+      // theme: isLightTheme ? ThemeData.light() : ThemeData.dark(),
       theme: ThemeData(
         primarySwatch: Colors.blue,
         appBarTheme: const AppBarTheme(
@@ -28,13 +23,61 @@ class MyApp extends StatelessWidget {
               TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      // home: const MyHomePage(),
-      routerConfig: _router,
+      home: const Homepage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-final GoRouter _router = GoRouter(routes: [
-  GoRoute(path: '/', builder: (context, state) => const Home()),
-  GoRoute(path: '/counter', builder: (context, state) => const Counter()),
-]);
+class Homepage extends ConsumerWidget {
+  const Homepage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final counter = ref.watch(counterNotifierProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Notifier Demo'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            counter.toString(),
+            style: const TextStyle(fontSize: 40),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  ref.read(counterNotifierProvider.notifier).increament();
+                },
+                child: const Text(
+                  '+',
+                  style: TextStyle(fontSize: 40),
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  ref.read(counterNotifierProvider.notifier).decreament();
+                },
+                child: const Text(
+                  '-',
+                  style: TextStyle(fontSize: 40),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
