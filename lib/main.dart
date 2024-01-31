@@ -35,6 +35,7 @@ class Homepage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final counter = ref.watch(counterNotifierProvider);
+    // final name = ref.watch(nameNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,6 +48,10 @@ class Homepage extends ConsumerWidget {
             counter.toString(),
             style: const TextStyle(fontSize: 40),
           ),
+          /*Text(
+            name,
+            style: const TextStyle(fontSize: 40, color: Colors.purple),
+          ),*/
           const SizedBox(
             height: 20,
           ),
@@ -74,8 +79,35 @@ class Homepage extends ConsumerWidget {
                   style: TextStyle(fontSize: 40),
                 ),
               ),
+              // Text(ref.read(nameNotifierProvider.notifier).studentName());
             ],
-          )
+          ),
+          /*Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    ref.read(nameNotifierProvider.notifier).studentName();
+                  },
+                  child: const Text(
+                    'Get Student Name',
+                    style: TextStyle(fontSize: 20),
+                  ))
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    ref.read(nameNotifierProvider.notifier).companyName();
+                  },
+                  child: const Text(
+                    'Get Company Name',
+                    style: TextStyle(fontSize: 20),
+                  ))
+            ],
+          )*/
         ],
       ),
     );
