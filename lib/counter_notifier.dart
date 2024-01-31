@@ -1,6 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class CounterNotifier extends Notifier<int> {
+part 'counter_notifier.g.dart';
+
+@riverpod
+class CounterNotifier extends _$CounterNotifier {
+  @override
+  int build() {
+    return 0;
+  }
+
+  void increament() {
+    state++;
+  }
+
+  void decreament() {
+    state--;
+  }
+}
+
+/*class CounterNotifier extends Notifier<int> {
   @override
   int build() {
     return 0;
@@ -37,4 +56,6 @@ class NameNotifier extends Notifier<String> {
 
 final nameNotifierProvider = NotifierProvider<NameNotifier, String>(() {
   return NameNotifier();
-});
+});*/
+
+
